@@ -1,2 +1,141 @@
-# JEI_FEEG6042_A5
-Coursework repository for FEEG6042 – Introduction to Machine Learning (Question 5) at the Southampton Ocean Engineering Joint Institute at Harbin Engineering University. Contains Hongyang Yu’s (ID: 2022283219 / 34456104) implementation, experimental results and report files, published to facilitate marking and review.
+# FEEG6042 – MNIST Model Comparison (Question 5)
+
+Coursework repository for **FEEG6042 – Introduction to Machine Learning** (Question 5) at the **Southampton Ocean Engineering Joint Institute, Harbin Engineering University**.
+
+This repository contains **Hongyang Yu’s** implementation and experimental results for Question 5 (Student ID: **2022283219 / 34456104**).  
+It is published **solely to facilitate marking and review by the teaching team** and is **not** intended as an official reference solution.
+
+---
+
+## 1. Brief overview
+
+The coursework compares three neural network architectures on the MNIST handwritten digit classification task:
+
+1. **Sequential dense network** operating on flattened 28×28 images.  
+2. **Sequential convolutional network (CNN)** with two 3×3 convolutional layers, max pooling and a small dense classifier.  
+3. **Parallel dense network** with two fully connected branches whose outputs are concatenated before the final classifier.
+
+All three models are trained under a matched configuration (Adam optimiser, learning rate \(10^{-3}\), batch size 128, 20 epochs, fixed random seed 6042) to make the comparison as fair as possible.
+
+Final test-set accuracies on MNIST are:
+
+| Model          | Test accuracy |
+|----------------|---------------|
+| Dense          | 0.9788        |
+| CNN            | 0.9880        |
+| Parallel dense | 0.9819        |
+
+For a similar parameter budget (roughly \(2.0\times10^5\) trainable weights), the CNN achieves the best overall trade-off between model size and accuracy, with the parallel dense model slightly improving over the single-branch dense baseline.
+
+---
+
+## 2. Environment and quick start
+
+Experiments were run with:
+
+- Python 3.12.7  
+- TensorFlow 2.20.0 (CPU backend, Keras 3.12.0)  
+- NumPy, Matplotlib and standard Python libraries  
+
+Any reasonably recent CPU-only TensorFlow 2.x installation should be able to reproduce the results.
+
+A minimal workflow is:
+
+```bash
+# clone the repository
+git clone https://github.com/Y-Flying9264/JEI_FEEG6042_A5.git
+cd JEI_FEEG6042_A5
+
+# install basic dependencies (example)
+pip install tensorflow==2.20.0 numpy matplotlib
+
+# train, evaluate, then run the retrospective analysis
+
+python train.py   # train all three models, save weights and logs
+python eval.py    # evaluate on the test set and generate plots
+python epoch.py   # analyse best-validation-loss epochs
+~~~
+
+------
+
+## 3. Data
+
+The code uses the standard Keras helper to obtain MNIST:
+
+```python
+from tensorflow import keras
+
+(x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+```
+
+For reproducibility, `train.py` expects a local NumPy archive `data/mnist.npz`.
+ You can either:
+
+- create it yourself with a small helper script that calls `keras.datasets.mnist.load_data()` and saves the arrays as `data/mnist.npz`, or
+- download a prepared file from Google Drive and place it under `data/`:
+
+```text
+MNIST npz: https://drive.google.com/file/d/1wKoVBzX-7cbZJGUplbVJh8fPP-aAU1_z/view?usp=sharing
+```
+
+After this, `data/mnist.npz` should exist and `train.py` will load it via NumPy.
+
+------
+
+## 4. Repository structure
+
+A typical layout of this repository is:
+
+```text
+JEI_FEEG6042_A5/
+├── data/
+│   └── mnist.npz               # Local MNIST copy
+├── weights/                    # Model checkpoints (can be restored from Drive)
+│   ├── dense_mnist.weights.h5
+│   ├── cnn_mnist.weights.h5
+│   └── parallel_mnist.weights.h5
+├── logs/                       # Training logs (NumPy npz + summary txt)
+│   ├── hist_dense.npz
+│   ├── hist_cnn.npz
+│   ├── hist_parallel.npz
+│   └── train_summary.txt
+├── results/
+├── models.py                   # Definition of the three Keras models
+├── train.py                    # Training script for all three models
+├── eval.py                     # Evaluation, confusion matrices and plotting
+├── epoch.py                    # Retrospective early-stopping / overfitting analysis
+└── README.md
+```
+
+------
+
+## 5. Pretrained weights and logs
+
+For convenience, all trained weights and log files used in the report have been archived and uploaded to Google Drive:
+
+- **Weights archive** (`weights/` directory):
+   https://drive.google.com/file/d/1S8hRvEB5eCgqh7Go-gxiDnJIg1crg59h/view?usp=sharing
+- **Logs archive** (`logs/` directory):
+   https://drive.google.com/file/d/1Rb99TCMZWV9BH5M7gYxnJNVcqi6zO9OB/view?usp=sharing
+
+To use them, download the archives and extract them into the root of the repository so that the `weights/` and `logs/` folders match the structure shown above.
+ After extraction you can directly run:
+
+```bash
+python eval.py
+```
+
+without re-training the models.
+
+------
+
+## 6. Copyright and academic-use notice
+
+- **Code, figures and report text**
+   © 2025 **Hongyang Yu**. All rights reserved.
+   The material is provided **for teaching and assessment purposes only** within the context of FEEG6042 at the Southampton Ocean Engineering Joint Institute (a joint institute of **Harbin Engineering University** and the **University of Southampton**). It does not represent an official solution or position of either university.
+- **Dataset**
+   The MNIST handwritten digit dataset was created by Yann LeCun and collaborators as a subset of the NIST handwritten digit databases. For the original description and terms of use, please refer to the official project page:
+   http://yann.lecun.com/exdb/mnist/
+
+Please **do not reuse this repository as a template or solution for future coursework submissions**. Any unauthorised copying or re-use may constitute academic misconduct under the relevant university regulations.
