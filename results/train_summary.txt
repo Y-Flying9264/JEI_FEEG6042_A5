@@ -1,0 +1,23 @@
+RANDOM_SEED = 6042
+EPOCHS      = 20
+BATCH_SIZE  = 128
+VAL_SPLIT   = 0.1
+
+=== Dense model ===
+#Params: 218058
+Final train loss: 0.0040, train acc: 0.9989
+Final val loss:   0.1080, val acc: 0.9822
+Test loss: 0.1075, test acc: 0.9788
+
+=== CNN model ===
+#Params: 205866
+Final train loss: 0.0052, train acc: 0.9985
+Final val loss:   0.0754, val acc: 0.9880
+Test loss: 0.0557, test acc: 0.9880
+
+=== Parallel dense model ===
+#Params: 203530
+Final train loss: 0.0030, train acc: 0.9994
+Final val loss:   0.0782, val acc: 0.9832
+Test loss: 0.0746, test acc: 0.9819
+
